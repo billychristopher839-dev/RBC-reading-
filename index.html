@@ -273,6 +273,62 @@
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:79;display:none;}
   #confetti.show{display:block;}
 
+  /* book display (read-only; edited via setup gate) */
+  .bk-show{
+    font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--ink);
+    padding:6px 8px;background:#F3F7FC;border-radius:10px;min-width:140px;
+  }
+  .bk-show.author{font-family:'Hanken Grotesk';font-weight:600;font-size:14px;color:var(--muted);}
+  .bk-show.pages{font-family:'JetBrains Mono';font-weight:700;text-align:center;font-size:16px;min-width:92px;}
+
+  /* onboarding gate */
+  .gate{
+    position:relative;background:linear-gradient(160deg,#fff,#F4F8FD);border-radius:26px;max-width:760px;width:100%;
+    padding:28px 26px;box-shadow:0 40px 80px -30px rgba(0,0,0,.6);border:2px solid var(--gold);
+    animation:rise .5s cubic-bezier(.2,1.2,.3,1);max-height:92vh;display:flex;flex-direction:column;
+  }
+  .gate h3{font-family:'Fraunces',serif;font-weight:900;font-size:26px;color:var(--blue-deep);margin:0 0 4px;}
+  .gate .gsub{color:#3c5168;font-size:13.5px;line-height:1.5;margin:0 0 16px;}
+  .grow3{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  .gf{display:flex;flex-direction:column;gap:4px;flex:1 1 180px;}
+  .gf.small{flex:0 0 110px;}
+  .gf label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800;}
+  .gf input{
+    border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:14.5px;font-weight:600;
+    color:var(--ink);background:#fff;font-family:'Hanken Grotesk';
+  }
+  .gf input:focus{outline:none;border-color:var(--blue-glow);box-shadow:0 0 0 3px rgba(31,127,212,.15);}
+  .gchaps-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .gchaps-head span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800;}
+  .gchaps{overflow:auto;flex:1 1 auto;min-height:120px;padding:2px;border:1px solid var(--line);border-radius:14px;background:#FAFCFE;}
+  .gch{border-bottom:1px solid var(--line);padding:10px;}
+  .gch:last-child{border-bottom:none;}
+  .gch-top{display:flex;gap:8px;align-items:center;}
+  .gch-n{font-family:'Fraunces',serif;font-weight:800;color:var(--blue);width:36px;flex:0 0 auto;font-size:14px;text-align:center;}
+  .gch-name{flex:1 1 auto;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13.5px;font-weight:600;background:#fff;min-width:60px;}
+  .gch-ep{width:74px;flex:0 0 auto;border:1px solid var(--line);border-radius:8px;padding:7px 4px;font-family:'JetBrains Mono';font-weight:700;font-size:13px;text-align:center;background:#fff;color:var(--blue-deep);}
+  .gch-x{flex:0 0 auto;width:30px;height:30px;border:none;border-radius:8px;background:#fff;color:#b5402f;font-size:17px;font-weight:800;cursor:pointer;border:1px solid #f0c9c9;line-height:1;}
+  .gch-x:hover{background:#b5402f;color:#fff;}
+  .gch-ms{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .gch-yr{width:90px;flex:0 0 auto;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:'JetBrains Mono';font-weight:700;font-size:12px;background:#fff;color:var(--blue-deep);}
+  .gch-mt{flex:1 1 160px;border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:13px;font-weight:600;background:#fff;min-width:120px;}
+  .gch-md{flex:1 1 100%;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:12.5px;background:#fff;font-family:'Hanken Grotesk';resize:vertical;min-height:38px;color:#3c5168;}
+  .gch-ms input:focus,.gch-md:focus,.gch-name:focus,.gch-ep:focus{outline:none;border-color:var(--blue-glow);}
+  .gacts{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;}
+
+  /* review */
+  .review{padding:16px 18px 18px;}
+  .stars{display:flex;gap:4px;margin-bottom:10px;}
+  .stars span{font-size:26px;cursor:pointer;color:#D7E4F2;transition:.12s;user-select:none;}
+  .stars span.on{color:var(--gold-deep);}
+  .stars span:hover{transform:scale(1.15);}
+  .review textarea{
+    width:100%;min-height:110px;border:1px solid var(--line);border-radius:12px;padding:11px 13px;
+    font-family:'Hanken Grotesk';font-size:14px;line-height:1.55;color:var(--ink);background:#FAFCFE;resize:vertical;
+  }
+  .review textarea:focus{outline:none;border-color:var(--blue-glow);box-shadow:0 0 0 3px rgba(31,127,212,.12);background:#fff;}
+  .review .rsaved{font-size:11.5px;color:var(--muted);font-weight:700;margin-top:6px;}
+
   @media(max-width:820px){
     .stats{grid-template-columns:1fr;}
     .cols{grid-template-columns:1fr;}
@@ -291,7 +347,7 @@
       <div class="hero-titles">
         <div class="eyebrow">RBC Empire · Reading Tracker</div>
         <h1>Build the <span class="em">Royal Bank</span><br>one page at a time</h1>
-        <div class="subtitle">Every page you read of <em>The Worldly Philosophers</em> pushes RBC's assets under management and net income higher. Finish a chapter and you unlock a real moment from the bank's history. Finish the book and RBC takes the top spot in Canadian banking.</div>
+        <div class="subtitle">Every page you read pushes RBC's assets under management and net income higher. Finish a chapter and you unlock a milestone from the bank's history. Finish the whole book and RBC takes the top spot in Canadian banking.</div>
       </div>
       <div class="tier-badge">
         <div class="tier-cap">Current Standing</div>
@@ -326,16 +382,17 @@
     <div class="bookrow">
       <div class="bk-field">
         <label>Book Title</label>
-        <input class="bk-input" id="bkTitle" value="The Worldly Philosophers">
+        <div class="bk-show" id="bkTitleShow">The Worldly Philosophers</div>
       </div>
       <div class="bk-field">
         <label>Author</label>
-        <input class="bk-input author" id="bkAuthor" value="Robert L. Heilbroner">
+        <div class="bk-show author" id="bkAuthorShow">Robert L. Heilbroner</div>
       </div>
       <div class="bk-field">
         <label>Total Pages</label>
-        <input class="bk-input pages" id="bkPages" type="number" min="1" value="368">
+        <div class="bk-show pages" id="bkPagesShow">368</div>
       </div>
+      <button class="qbtn" id="openSetup" style="margin-left:auto;align-self:center;">✎ Edit book setup</button>
     </div>
 
     <div class="progress-block">
@@ -369,7 +426,7 @@
     <section class="panel">
       <div class="panel-h">
         <span class="dot"></span><h2>Chapters &amp; Milestones</h2>
-        <span class="hint">tick a chapter to bank an event</span>
+        <span class="hint">tick a chapter to bank its event · edit in book setup</span>
       </div>
       <div class="seclist" id="secList"></div>
     </section>
@@ -409,12 +466,48 @@
           <div class="sessions">Reading sprints completed: <b id="sessCount">0</b></div>
         </div>
       </section>
+
+      <section class="panel">
+        <div class="panel-h">
+          <span class="dot"></span><h2>Your Review</h2>
+          <span class="hint">saves as you type</span>
+        </div>
+        <div class="review">
+          <div class="stars" id="stars">
+            <span data-s="1">★</span><span data-s="2">★</span><span data-s="3">★</span><span data-s="4">★</span><span data-s="5">★</span>
+          </div>
+          <textarea id="reviewText" placeholder="What did you make of the book? What stuck with you, what fell flat, who should read it?"></textarea>
+          <div class="rsaved" id="rsaved">Nothing written yet.</div>
+        </div>
+      </section>
     </div>
   </div>
 
   <div class="footbar">
     <span class="note">Your progress saves automatically. The game works offline and keeps your data in this browser.</span>
     <button class="danger" id="resetAll">Reset everything</button>
+  </div>
+</div>
+
+<!-- ONBOARDING GATE -->
+<div class="veil" id="gateVeil">
+  <div class="gate">
+    <h3 id="gateTitle">Set up your book</h3>
+    <p class="gsub">Tell the game what you're reading. Each chapter carries a milestone: the event RBC unlocks the moment you finish that chapter. The defaults follow RBC's real history, and every field is yours to rewrite.</p>
+    <div class="grow3">
+      <div class="gf"><label>Book title</label><input id="gTitle" placeholder="e.g. The Worldly Philosophers"></div>
+      <div class="gf"><label>Author</label><input id="gAuthor" placeholder="e.g. Robert L. Heilbroner"></div>
+      <div class="gf small"><label>Total pages</label><input id="gPages" type="number" min="1" placeholder="368"></div>
+    </div>
+    <div class="gchaps-head">
+      <span>Chapters &amp; milestones</span>
+      <button class="qbtn" id="gAdd">+ Add chapter</button>
+    </div>
+    <div class="gchaps" id="gChaps"></div>
+    <div class="gacts">
+      <button class="tbtn ghost" id="gCancel">Cancel</button>
+      <button class="tbtn gold" id="gSave">Save &amp; start reading</button>
+    </div>
   </div>
 </div>
 
@@ -427,7 +520,7 @@
   <div class="win">
     <div class="crown">🏆👑</div>
     <h3>RBC is <span class="em">#1 in Canadian Banking</span></h3>
-    <p id="winText">You finished <em>The Worldly Philosophers</em>. Along the way you built the Royal Bank of Canada from one Halifax branch into the largest bank in the country.</p>
+    <p id="winText">You finished your book. Along the way you built the Royal Bank of Canada from one Halifax branch into the largest bank in the country.</p>
     <div class="finals">
       <div class="fin"><div class="l">Final AUM</div><div class="v" id="winAum">$1.30 T</div></div>
       <div class="fin"><div class="l">Net Income</div><div class="v" id="winNi">$16.2 B</div></div>
@@ -442,15 +535,16 @@
 
 <script>
 /* ============================================================
-   STORAGE: window.storage (in-app) → localStorage (offline)
+   STORAGE: window.storage (in-app) -> localStorage (offline)
    ============================================================ */
-const KEY = 'rbc_reading_empire_v1';
+const KEY = 'rbc_reading_empire_v2';
+const OLD_KEY = 'rbc_reading_empire_v1';
 const hasWindowStorage = !!(window.storage && typeof window.storage.get === 'function');
 const Store = {
-  async get(){
+  async get(k){
     try{
-      if(hasWindowStorage){ const r = await window.storage.get(KEY); return r ? r.value : null; }
-      return localStorage.getItem(KEY);
+      if(hasWindowStorage){ const r = await window.storage.get(k||KEY); return r ? r.value : null; }
+      return localStorage.getItem(k||KEY);
     }catch(e){ return null; }
   },
   async set(v){
@@ -468,9 +562,10 @@ const Store = {
 };
 
 /* ============================================================
-   REAL RBC MILESTONES (chronological, one per chapter)
+   DEFAULTS: The Worldly Philosophers + real RBC milestones.
+   Every one of these is editable in the book setup gate.
    ============================================================ */
-const MILESTONES = [
+const DEFAULT_MILESTONES = [
   {yr:'1864', t:'A single branch in Halifax', d:"The Merchants Bank opens for business on Bedford Row in Halifax, Nova Scotia, with one office and a handful of clerks."},
   {yr:'1901', t:'A new name: Royal Bank of Canada', d:"The Merchants' Bank of Halifax takes a new name, the Royal Bank of Canada. The bank now has its sights on the whole country."},
   {yr:'1907', t:'Head office moves to Montreal', d:"RBC moves its head office to Montreal, then the financial capital of Canada. It puts the bank right next to the country's biggest markets."},
@@ -484,30 +579,42 @@ const MILESTONES = [
   {yr:'2024', t:'The largest deal in its history', d:"RBC completes its C$13.5-billion purchase of HSBC Bank Canada, the biggest acquisition in its history. The deal locks in its place as Canada's number-one bank."}
 ];
 
+const DEFAULT_CHAPTERS = [
+  {name:'Introduction',                                        ep:15},
+  {name:'The Economic Revolution',                             ep:41},
+  {name:'The Wonderful World of Adam Smith',                   ep:74},
+  {name:'The Gloomy Presentiments of Malthus & Ricardo',       ep:104},
+  {name:'The Dreams of the Utopian Socialists',                ep:135},
+  {name:'The Inexorable System of Karl Marx',                  ep:168},
+  {name:'The Victorian World & the Underworld of Economics',   ep:213},
+  {name:'The Savage Society of Thorstein Veblen',              ep:248},
+  {name:'The Heresies of John Maynard Keynes',                 ep:287},
+  {name:'The Contradictions of Joseph Schumpeter',             ep:310},
+  {name:'The End of the Worldly Philosophy?',                  ep:340}
+];
+
 const TIERS = [
   'Single-Branch Startup','Maritime Up-and-Comer','Regional Contender','National Player',
   'Coast-to-Coast Network','Canadian Heavyweight','Dominant Domestic Force','Continental Expander',
   'North American Power','Crisis-Proof Titan','Global Innovation Leader','🏆 #1 in Canadian Banking'
 ];
 
-const CHAPTERS = [
-  {rn:'I',    name:'Introduction',                                       ep:15},
-  {rn:'II',   name:'The Economic Revolution',                            ep:41},
-  {rn:'III',  name:'The Wonderful World of Adam Smith',                  ep:74},
-  {rn:'IV',   name:'The Gloomy Presentiments of Malthus & Ricardo',     ep:104},
-  {rn:'V',    name:'The Dreams of the Utopian Socialists',              ep:135},
-  {rn:'VI',   name:'The Inexorable System of Karl Marx',                ep:168},
-  {rn:'VII',  name:'The Victorian World & the Underworld of Economics', ep:213},
-  {rn:'VIII', name:'The Savage Society of Thorstein Veblen',            ep:248},
-  {rn:'IX',   name:'The Heresies of John Maynard Keynes',              ep:287},
-  {rn:'X',    name:'The Contradictions of Joseph Schumpeter',          ep:310},
-  {rn:'XI',   name:'The End of the Worldly Philosophy?',               ep:340}
-];
-
 /* targets at 100% (real RBC FY2024 figures) */
-const AUM_MAX_T = 1.30;    // ~$1.3 trillion AUM
+const AUM_MAX_T = 1.30;    // about $1.3 trillion AUM
 const NI_MAX_B  = 16.20;   // C$16.2B net income FY2024
 const AUM_MIN_T = 0.02, NI_MIN_B = 0.05;
+
+/* roman numerals for chapter labels */
+function roman(n){
+  const map=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
+  let r=''; for(const [v,s] of map){ while(n>=v){ r+=s; n-=v; } } return r;
+}
+
+/* a default milestone for chapters the player adds beyond the RBC list */
+function blankMilestone(i){
+  const m = DEFAULT_MILESTONES[i % DEFAULT_MILESTONES.length];
+  return {yr:m.yr, t:m.t, d:m.d};
+}
 
 /* ============================================================
    STATE
@@ -521,8 +628,13 @@ function defaultState(){
     page:0,
     minutes:25,
     sessions:0,
-    sections: CHAPTERS.map(c => ({rn:c.rn, name:c.name, ep:c.ep, done:false})),
-    won:false
+    won:false,
+    setupDone:false,
+    review:{stars:0, text:''},
+    sections: DEFAULT_CHAPTERS.map((c,i)=>({
+      name:c.name, ep:c.ep, done:false,
+      ms:{...DEFAULT_MILESTONES[i]}
+    }))
   };
 }
 let saveTimer=null;
@@ -584,6 +696,14 @@ function tween(el, to, fmt, dur=700){
    RENDER
    ============================================================ */
 const $ = id => document.getElementById(id);
+const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function tierFor(done, n){
+  if(n<=0) return TIERS[0];
+  if(done>=n) return TIERS[TIERS.length-1];
+  const idx=Math.floor(done/n*(TIERS.length-1));
+  return TIERS[Math.min(TIERS.length-2, idx)];
+}
 
 function renderStats(){
   const p=progress();
@@ -591,10 +711,11 @@ function renderStats(){
   tween($('niVal'), niB(), fmtNI);
   $('aumSpark').style.width = (p*100)+'%';
   $('niSpark').style.width  = (p*100)+'%';
+  const n=state.sections.length;
   const done = state.sections.filter(s=>s.done).length;
-  $('msVal').textContent = done+' / 11';
-  $('msSpark').style.width = (done/11*100)+'%';
-  $('tierPill').textContent = TIERS[done] || TIERS[TIERS.length-1];
+  $('msVal').textContent = done+' / '+n;
+  $('msSpark').style.width = (n? done/n*100 : 0)+'%';
+  $('tierPill').textContent = tierFor(done, n);
 }
 
 function renderProgress(){
@@ -605,7 +726,6 @@ function renderProgress(){
   $('pageTotal').textContent=state.total;
   if(document.activeElement!==$('pageNow')) $('pageNow').value=state.page;
   $('pageNow').max=state.total;
-  // ticks for each chapter end-page
   const tk=$('ticks'); tk.innerHTML='';
   state.sections.forEach(s=>{
     if(state.total>0 && s.ep<=state.total){
@@ -613,6 +733,12 @@ function renderProgress(){
       d.style.left=(s.ep/state.total*100)+'%'; tk.appendChild(d);
     }
   });
+}
+
+function renderBook(){
+  $('bkTitleShow').textContent=state.title||'Untitled';
+  $('bkAuthorShow').textContent=state.author||'Unknown author';
+  $('bkPagesShow').textContent=state.total;
 }
 
 function renderSections(){
@@ -623,18 +749,15 @@ function renderSections(){
     row.className='sec'+(s.done?' done':'')+(claimable?' claimable':'');
     row.innerHTML=`
       <div class="claimbox" data-i="${i}" title="${s.done?'Completed. Click to un-mark':'Mark chapter complete'}">${s.done?'✓':''}</div>
-      <div class="rn">${s.rn}</div>
-      <input class="name" data-i="${i}" value="${s.name.replace(/"/g,'&quot;')}">
+      <div class="rn">${roman(i+1)}</div>
+      <div class="name" style="cursor:default;">${esc(s.name)}</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
-        <input class="ep" type="number" min="0" data-i="${i}" value="${s.ep}">
+        <div class="ep" style="display:flex;align-items:center;justify-content:center;">${s.ep}</div>
         <span class="ep-cap">end pg</span>
       </div>`;
     list.appendChild(row);
   });
-  // wire claim boxes
   list.querySelectorAll('.claimbox').forEach(b=>b.onclick=()=>toggleSection(+b.dataset.i));
-  list.querySelectorAll('.name').forEach(inp=>inp.onchange=()=>{ state.sections[+inp.dataset.i].name=inp.value; save(); renderLedger(); });
-  list.querySelectorAll('.ep').forEach(inp=>inp.onchange=()=>{ state.sections[+inp.dataset.i].ep=Math.max(0,+inp.value||0); save(); renderProgress(); renderSections(); });
 }
 
 function renderLedger(freshIdx=-1){
@@ -643,32 +766,35 @@ function renderLedger(freshIdx=-1){
   if(doneIdx.length===0){
     led.className='ledger empty-state';
     led.innerHTML=`<div class="empty">No expansions yet.<br>Read a chapter, mark it done, and watch <b>RBC</b> make its next move.</div>`;
-    $('ledgerHint').textContent="real moments from RBC's past";
+    $('ledgerHint').textContent="milestones you define, unlocked by reading";
     return;
   }
   led.className='ledger';
   let html='<div class="tl">';
   doneIdx.forEach(i=>{
-    const m=MILESTONES[i], s=state.sections[i];
+    const s=state.sections[i], m=s.ms||{};
     html+=`<div class="ev${i===freshIdx?' fresh':''}">
-      <span class="yr">${m.yr}</span>
-      <div class="et">${m.t}</div>
-      <div class="ed">${m.d}</div>
-      <div style="font-size:11px;color:#8aa0b7;margin-top:5px;font-weight:700;">↳ unlocked by Ch. ${s.rn}: ${s.name}</div>
+      <span class="yr">${esc(m.yr||'·')}</span>
+      <div class="et">${esc(m.t||'Milestone')}</div>
+      <div class="ed">${esc(m.d||'')}</div>
+      <div style="font-size:11px;color:#8aa0b7;margin-top:5px;font-weight:700;">↳ unlocked by Ch. ${roman(i+1)}: ${esc(s.name)}</div>
     </div>`;
   });
   html+='</div>';
   led.innerHTML=html;
-  $('ledgerHint').textContent=doneIdx.length+' of 11 unlocked';
+  $('ledgerHint').textContent=doneIdx.length+' of '+state.sections.length+' unlocked';
 }
 
-function renderBook(){
-  if(document.activeElement!==$('bkTitle')) $('bkTitle').value=state.title;
-  if(document.activeElement!==$('bkAuthor')) $('bkAuthor').value=state.author;
-  if(document.activeElement!==$('bkPages')) $('bkPages').value=state.total;
+function renderReview(){
+  const r=state.review||{stars:0,text:''};
+  $('stars').querySelectorAll('span').forEach(sp=>{
+    sp.classList.toggle('on', +sp.dataset.s <= r.stars);
+  });
+  if(document.activeElement!==$('reviewText')) $('reviewText').value=r.text||'';
+  $('rsaved').textContent = r.text || r.stars ? 'Saved.' : 'Nothing written yet.';
 }
 
-function renderAll(fresh=-1){ renderBook(); renderStats(); renderProgress(); renderSections(); renderLedger(fresh); }
+function renderAll(fresh=-1){ renderBook(); renderStats(); renderProgress(); renderSections(); renderLedger(fresh); renderReview(); }
 
 /* ============================================================
    ACTIONS
@@ -682,8 +808,8 @@ function toggleSection(i){
   audio();
   if(!s.done){
     s.done=true; dingMilestone();
-    const m=MILESTONES[i];
-    toast('🏦', `${m.yr}: ${m.t}`);
+    const m=s.ms||{};
+    toast('🏦', (m.yr? m.yr+': ' : '') + (m.t||'Milestone unlocked'));
     renderStats(); renderSections(); renderLedger(i);
     checkWin();
   }else{
@@ -694,7 +820,8 @@ function toggleSection(i){
   save();
 }
 function checkWin(){
-  const allDone=state.sections.every(s=>s.done);
+  const n=state.sections.length;
+  const allDone = n>0 && state.sections.every(s=>s.done);
   if(allDone && !state.won){
     state.won=true; save();
     setTimeout(showVictory, 450);
@@ -716,12 +843,98 @@ function showVictory(){
   $('winAum').textContent=fmtAUM(AUM_MAX_T);
   $('winNi').textContent=fmtNI(NI_MAX_B);
   $('winPages').textContent=state.total;
-  $('winText').innerHTML=`You finished <em>${state.title}</em>. Along the way you took the Royal Bank of Canada from one Halifax branch to the largest bank in the country, with <b>${fmtNI(NI_MAX_B)}</b> in annual net income.`;
+  $('winText').innerHTML=`You finished <em>${esc(state.title)}</em>. Along the way you took the Royal Bank of Canada from one Halifax branch to the largest bank in the country, with <b>${fmtNI(NI_MAX_B)}</b> in annual net income. Now go write your review while it's fresh.`;
   $('veil').classList.add('show');
   fanfare();
   startConfetti();
 }
 function hideVictory(){ $('veil').classList.remove('show'); stopConfetti(); }
+
+/* ============================================================
+   ONBOARDING GATE (book setup window)
+   ============================================================ */
+let gw=[];          // working copy of chapters while the gate is open
+let gateFirstRun=false;
+
+function openGate(firstRun=false){
+  gateFirstRun=firstRun;
+  $('gateTitle').textContent = firstRun ? 'Set up your book' : 'Edit your book';
+  $('gCancel').style.display = firstRun ? 'none' : '';
+  $('gTitle').value=state.title;
+  $('gAuthor').value=state.author;
+  $('gPages').value=state.total;
+  gw = state.sections.map(s=>({name:s.name, ep:s.ep, ms:{yr:s.ms?.yr||'', t:s.ms?.t||'', d:s.ms?.d||''}}));
+  renderGateChaps();
+  $('gateVeil').classList.add('show');
+}
+function closeGate(){ $('gateVeil').classList.remove('show'); }
+
+function renderGateChaps(){
+  const box=$('gChaps'); box.innerHTML='';
+  gw.forEach((c,i)=>{
+    const row=document.createElement('div'); row.className='gch';
+    row.innerHTML=`
+      <div class="gch-top">
+        <span class="gch-n">${roman(i+1)}</span>
+        <input class="gch-name" data-i="${i}" data-f="name" value="${esc(c.name)}" placeholder="Chapter name">
+        <input class="gch-ep" data-i="${i}" data-f="ep" type="number" min="0" value="${c.ep}" title="Page this chapter ends on">
+        <button class="gch-x" data-i="${i}" title="Remove this chapter">×</button>
+      </div>
+      <div class="gch-ms">
+        <input class="gch-yr" data-i="${i}" data-f="yr" value="${esc(c.ms.yr)}" placeholder="Year">
+        <input class="gch-mt" data-i="${i}" data-f="t" value="${esc(c.ms.t)}" placeholder="Milestone title">
+        <textarea class="gch-md" data-i="${i}" data-f="d" placeholder="What does RBC do when you finish this chapter?">${esc(c.ms.d)}</textarea>
+      </div>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll('input,textarea').forEach(el=>{
+    el.oninput=()=>{
+      const i=+el.dataset.i, f=el.dataset.f;
+      if(f==='name') gw[i].name=el.value;
+      else if(f==='ep') gw[i].ep=Math.max(0,+el.value||0);
+      else gw[i].ms[f]=el.value;
+    };
+  });
+  box.querySelectorAll('.gch-x').forEach(b=>b.onclick=()=>{
+    if(gw.length<=1){ toast('⚠️','A book needs at least one chapter.'); return; }
+    gw.splice(+b.dataset.i,1); renderGateChaps();
+  });
+}
+
+function gateAddChapter(){
+  const lastEp = gw.length ? gw[gw.length-1].ep : 0;
+  gw.push({name:'New chapter', ep:lastEp+10, ms:blankMilestone(gw.length)});
+  renderGateChaps();
+  $('gChaps').scrollTop=$('gChaps').scrollHeight;
+}
+
+function gateSave(){
+  const title=$('gTitle').value.trim();
+  const author=$('gAuthor').value.trim();
+  const total=Math.max(1,+$('gPages').value||0);
+  if(!title){ toast('⚠️','Give the book a title.'); return; }
+  if(!$('gPages').value || total<1){ toast('⚠️','Total pages has to be at least 1.'); return; }
+  if(gw.length===0){ toast('⚠️','Add at least one chapter.'); return; }
+
+  const oldDone = state.sections.map(s=>s.done);
+  state.title=title;
+  state.author=author||'Unknown author';
+  state.total=total;
+  if(state.page>total) state.page=total;
+  state.sections = gw.map((c,i)=>({
+    name:c.name.trim()||('Chapter '+(i+1)),
+    ep:Math.min(c.ep,total),
+    done: oldDone[i]||false,
+    ms:{yr:c.ms.yr.trim(), t:c.ms.t.trim(), d:c.ms.d.trim()}
+  }));
+  state.won = state.sections.length>0 && state.sections.every(s=>s.done);
+  state.setupDone=true;
+  save();
+  closeGate();
+  renderAll();
+  toast('📚', gateFirstRun ? 'Book set. Start reading and build the bank.' : 'Book setup updated.');
+  gateFirstRun=false;
+}
 
 /* ============================================================
    TIMER  (wall-clock accurate; keeps running when the tab is
@@ -834,17 +1047,29 @@ addEventListener('resize',()=>{ if(cc&&cc.classList.contains('show')){ cc.width=
 function wire(){
   $('plus').onclick =()=>setPage(state.page+1);
   $('minus').onclick=()=>setPage(state.page-1);
-  document.querySelectorAll('.qbtn').forEach(b=>b.onclick=()=>setPage(state.page+ (+b.dataset.add)));
+  document.querySelectorAll('.quick .qbtn').forEach(b=>b.onclick=()=>setPage(state.page+ (+b.dataset.add)));
   $('pageNow').oninput=()=>setPage(+$('pageNow').value);
 
-  $('bkTitle').oninput =()=>{ state.title=$('bkTitle').value; save(); };
-  $('bkAuthor').oninput=()=>{ state.author=$('bkAuthor').value; save(); };
-  $('bkPages').onchange=()=>{
-    state.total=Math.max(1,+$('bkPages').value||1);
-    if(state.page>state.total) state.page=state.total;
-    save(); renderAll();
+  /* setup gate */
+  $('openSetup').onclick=()=>openGate(false);
+  $('gAdd').onclick=gateAddChapter;
+  $('gSave').onclick=gateSave;
+  $('gCancel').onclick=closeGate;
+  $('gateVeil').onclick=(e)=>{ if(e.target===$('gateVeil') && !gateFirstRun) closeGate(); };
+
+  /* review */
+  $('stars').querySelectorAll('span').forEach(sp=>sp.onclick=()=>{
+    const v=+sp.dataset.s;
+    state.review.stars = (state.review.stars===v) ? 0 : v;  // click again to clear
+    save(); renderReview();
+  });
+  $('reviewText').oninput=()=>{
+    state.review.text=$('reviewText').value;
+    save();
+    $('rsaved').textContent='Saved.';
   };
 
+  /* timer */
   document.querySelectorAll('.tchip button').forEach(b=>b.onclick=()=>{
     state.minutes=+b.dataset.min; $('tmrMin').value=state.minutes; save();
     if(!ticking){ remain=state.minutes*60; paintClock(); }
@@ -865,23 +1090,50 @@ function wire(){
   $('veil').onclick=(e)=>{ if(e.target===$('veil')) hideVictory(); };
 
   $('resetAll').onclick=async()=>{
-    if(!confirm('Reset all progress, milestones and timer? This cannot be undone.')) return;
+    if(!confirm('Reset all progress, milestones, review and timer? This cannot be undone.')) return;
     await Store.clear();
     state=defaultState();
     remain=state.minutes*60; resetTimer();
     $('sessCount').textContent=0;
     renderAll(); hideVictory();
-    toast('♻️','Everything reset. Back to a single Halifax branch.');
+    toast('♻️','Everything reset.');
+    openGate(true);
   };
 }
 
 /* ============================================================
-   INIT
+   INIT (with migration from the v1 save format)
    ============================================================ */
 (async function init(){
-  const raw=await Store.get();
   state=defaultState();
-  if(raw){
+  let raw=await Store.get();
+  let migrated=false;
+
+  if(!raw){
+    const old=await Store.get(OLD_KEY);
+    if(old){
+      try{
+        const s=JSON.parse(old);
+        state.title=s.title??state.title;
+        state.author=s.author??state.author;
+        state.total=s.total??state.total;
+        state.page=Math.min(s.page??0, state.total);
+        state.minutes=s.minutes??25;
+        state.sessions=s.sessions??0;
+        state.won=!!s.won;
+        if(Array.isArray(s.sections)){
+          state.sections=s.sections.map((x,i)=>({
+            name:x.name??('Chapter '+(i+1)),
+            ep:x.ep??0,
+            done:!!x.done,
+            ms: DEFAULT_MILESTONES[i] ? {...DEFAULT_MILESTONES[i]} : blankMilestone(i)
+          }));
+        }
+        state.setupDone=true;   // they were already mid-game
+        migrated=true; save();
+      }catch(e){}
+    }
+  }else{
     try{
       const s=JSON.parse(raw);
       state.title=s.title??state.title;
@@ -891,18 +1143,28 @@ function wire(){
       state.minutes=s.minutes??25;
       state.sessions=s.sessions??0;
       state.won=!!s.won;
-      if(Array.isArray(s.sections)&&s.sections.length===11){
+      state.setupDone=!!s.setupDone;
+      state.review=(s.review && typeof s.review==='object') ? {stars:+s.review.stars||0, text:String(s.review.text||'')} : {stars:0,text:''};
+      if(Array.isArray(s.sections) && s.sections.length){
         state.sections=s.sections.map((x,i)=>({
-          rn:CHAPTERS[i].rn, name:x.name??CHAPTERS[i].name, ep:x.ep??CHAPTERS[i].ep, done:!!x.done
+          name:x.name??('Chapter '+(i+1)),
+          ep:Math.max(0,+x.ep||0),
+          done:!!x.done,
+          ms:(x.ms && typeof x.ms==='object') ? {yr:String(x.ms.yr||''), t:String(x.ms.t||''), d:String(x.ms.d||'')} : blankMilestone(i)
         }));
       }
     }catch(e){}
   }
+
   $('sessCount').textContent=state.sessions||0;
   $('tmrMin').value=state.minutes||25;
   remain=(state.minutes||25)*60; paintClock();
   wire();
   renderAll();
+
+  /* first visit (or fresh reset): the onboarding gate is the front door */
+  if(!state.setupDone) openGate(true);
+  else if(migrated) toast('📚','Your old progress carried over. Edit the book any time via book setup.');
 })();
 </script>
 </body>
