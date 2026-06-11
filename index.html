@@ -31,6 +31,60 @@
   }
   .wrap{max-width:1120px;margin:0 auto;padding:22px 20px 90px;}
 
+  /* ---------- LIBRARY BAR ---------- */
+  .libbar{
+    background:var(--card);border-radius:var(--r);border:1px solid var(--line);
+    box-shadow:var(--shadow-sm);padding:14px 16px;margin-bottom:14px;
+  }
+  .libhead{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .libhead h2{font-family:'Fraunces',serif;font-weight:800;font-size:16px;color:var(--blue-deep);margin:0;}
+  .libhead .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--gold-soft);}
+  .libhead .cnt{font-size:12px;color:var(--muted);font-weight:700;margin-left:auto;}
+  .libhead .newbtn{
+    border:none;background:linear-gradient(180deg,var(--gold),var(--gold-deep));color:var(--blue-deep);
+    font-weight:800;font-size:13px;padding:8px 14px;border-radius:10px;cursor:pointer;transition:.14s;
+    box-shadow:0 6px 16px -8px var(--gold-deep);
+  }
+  .libhead .newbtn:hover{transform:translateY(-1px);}
+  .libshelf{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:thin;}
+  .libshelf::-webkit-scrollbar{height:6px;}
+  .libshelf::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+  .bk-card{
+    flex:0 0 220px;background:#fff;border:1.5px solid var(--line);border-radius:14px;
+    padding:12px 12px 10px;cursor:pointer;transition:.16s;position:relative;
+  }
+  .bk-card:hover{border-color:var(--blue-glow);transform:translateY(-2px);box-shadow:var(--shadow-sm);}
+  .bk-card.active{
+    border-color:var(--blue);background:linear-gradient(180deg,#F7FBFF,#fff);
+    box-shadow:0 8px 22px -12px var(--blue);
+  }
+  .bk-card.active::before{
+    content:"";position:absolute;left:0;top:0;height:100%;width:4px;border-radius:4px 0 0 4px;
+    background:linear-gradient(180deg,var(--gold),var(--gold-deep));
+  }
+  .bk-card .bk-t{
+    font-family:'Fraunces',serif;font-weight:700;font-size:14.5px;color:var(--ink);
+    line-height:1.2;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .bk-card .bk-a{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bk-card .bk-pg{display:flex;justify-content:space-between;font-family:'JetBrains Mono';font-size:11px;font-weight:700;color:var(--blue-deep);margin-bottom:5px;}
+  .bk-card .bk-pg .pct{color:var(--muted);}
+  .bk-card .bk-bar{height:5px;border-radius:999px;background:#E7EEF7;overflow:hidden;}
+  .bk-card .bk-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue-glow),var(--blue));}
+  .bk-card.done .bk-bar i{background:linear-gradient(90deg,var(--good),var(--good-deep));}
+  .bk-card .bk-foot{display:flex;justify-content:space-between;align-items:center;margin-top:7px;}
+  .bk-card .bk-stars{font-size:11px;color:var(--gold-deep);font-weight:800;letter-spacing:.05em;}
+  .bk-card .bk-del{
+    border:none;background:transparent;color:#b5402f;font-size:14px;cursor:pointer;padding:2px 5px;
+    border-radius:6px;opacity:.5;transition:.12s;line-height:1;
+  }
+  .bk-card .bk-del:hover{opacity:1;background:#fdecea;}
+  .bk-card .done-badge{
+    position:absolute;top:8px;right:8px;background:var(--good);color:#fff;font-size:10px;
+    font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.04em;
+  }
+
   /* ---------- HEADER ---------- */
   header.hero{
     position:relative;overflow:hidden;border-radius:24px;
@@ -339,6 +393,17 @@
 <body>
 <div class="wrap">
 
+  <!-- LIBRARY BAR -->
+  <section class="libbar">
+    <div class="libhead">
+      <span class="dot"></span>
+      <h2>Your Reading Library</h2>
+      <span class="cnt" id="libCnt">0 books</span>
+      <button class="newbtn" id="newBook">+ Add a new book</button>
+    </div>
+    <div class="libshelf" id="libShelf"></div>
+  </section>
+
   <!-- HERO -->
   <header class="hero">
     <div class="grid-globe"></div>
@@ -537,8 +602,9 @@
 /* ============================================================
    STORAGE: window.storage (in-app) -> localStorage (offline)
    ============================================================ */
-const KEY = 'rbc_reading_empire_v2';
-const OLD_KEY = 'rbc_reading_empire_v1';
+const KEY = 'rbc_reading_empire_v3';        // multi-book library
+const V2_KEY = 'rbc_reading_empire_v2';     // single book + per-chapter milestones
+const V1_KEY = 'rbc_reading_empire_v1';     // original single book
 const hasWindowStorage = !!(window.storage && typeof window.storage.get === 'function');
 const Store = {
   async get(k){
@@ -551,7 +617,7 @@ const Store = {
     try{
       if(hasWindowStorage){ await window.storage.set(KEY, v); }
       else { localStorage.setItem(KEY, v); }
-    }catch(e){ /* storage unavailable: stay in-memory */ }
+    }catch(e){}
   },
   async clear(){
     try{
@@ -562,8 +628,7 @@ const Store = {
 };
 
 /* ============================================================
-   DEFAULTS: The Worldly Philosophers + real RBC milestones.
-   Every one of these is editable in the book setup gate.
+   DEFAULTS
    ============================================================ */
 const DEFAULT_MILESTONES = [
   {yr:'1864', t:'A single branch in Halifax', d:"The Merchants Bank opens for business on Bedford Row in Halifax, Nova Scotia, with one office and a handful of clerks."},
@@ -599,49 +664,62 @@ const TIERS = [
   'North American Power','Crisis-Proof Titan','Global Innovation Leader','🏆 #1 in Canadian Banking'
 ];
 
-/* targets at 100% (real RBC FY2024 figures) */
-const AUM_MAX_T = 1.30;    // about $1.3 trillion AUM
-const NI_MAX_B  = 16.20;   // C$16.2B net income FY2024
+const AUM_MAX_T = 1.30, NI_MAX_B = 16.20;
 const AUM_MIN_T = 0.02, NI_MIN_B = 0.05;
 
-/* roman numerals for chapter labels */
 function roman(n){
   const map=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
   let r=''; for(const [v,s] of map){ while(n>=v){ r+=s; n-=v; } } return r;
 }
-
-/* a default milestone for chapters the player adds beyond the RBC list */
 function blankMilestone(i){
   const m = DEFAULT_MILESTONES[i % DEFAULT_MILESTONES.length];
   return {yr:m.yr, t:m.t, d:m.d};
 }
+function uid(){ return 'b_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7); }
 
-/* ============================================================
-   STATE
-   ============================================================ */
-let state = null;
-function defaultState(){
+function newDefaultBook(){
   return {
+    id: uid(),
     title:'The Worldly Philosophers',
     author:'Robert L. Heilbroner',
-    total:368,
-    page:0,
-    minutes:25,
-    sessions:0,
-    won:false,
-    setupDone:false,
+    total:368, page:0, won:false, sessions:0,
     review:{stars:0, text:''},
     sections: DEFAULT_CHAPTERS.map((c,i)=>({
       name:c.name, ep:c.ep, done:false,
       ms:{...DEFAULT_MILESTONES[i]}
-    }))
+    })),
+    created: Date.now()
   };
+}
+function newBlankBook(){
+  return {
+    id: uid(),
+    title:'', author:'', total:200, page:0, won:false, sessions:0,
+    review:{stars:0, text:''},
+    sections: [
+      {name:'Chapter 1', ep:50, done:false, ms:blankMilestone(0)},
+      {name:'Chapter 2', ep:120, done:false, ms:blankMilestone(1)},
+      {name:'Chapter 3', ep:200, done:false, ms:blankMilestone(2)}
+    ],
+    created: Date.now()
+  };
+}
+
+/* ============================================================
+   STATE (library shape)
+   ============================================================ */
+let state = null;     // {books:[...], activeId, minutes}
+let active = null;    // pointer to the current book
+function findActive(){ return state.books.find(b=>b.id===state.activeId) || state.books[0]; }
+function defaultState(){
+  const b = newDefaultBook();
+  return { books:[b], activeId:b.id, minutes:25, setupDone:false };
 }
 let saveTimer=null;
 function save(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>Store.set(JSON.stringify(state)),200); }
 
 /* ============================================================
-   AUDIO (Web Audio API, no external files, works offline)
+   AUDIO
    ============================================================ */
 let actx=null;
 function audio(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return actx; }
@@ -656,29 +734,22 @@ function tone(freq, start, dur, type='sine', gain=0.18){
   g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
   o.start(t0); o.stop(t0+dur+0.05);
 }
-function chimeDone(){            // timer finished
-  [ [659.25,0],[783.99,0.14],[1046.5,0.30] ].forEach(([f,s])=>tone(f,s,0.55,'triangle',0.22));
-  tone(523.25,0.30,0.7,'sine',0.12);
-}
-function dingMilestone(){        // chapter unlocked
-  tone(880,0,0.18,'triangle',0.2); tone(1174.7,0.10,0.28,'triangle',0.18);
-}
-function fanfare(){              // victory
+function chimeDone(){ [ [659.25,0],[783.99,0.14],[1046.5,0.30] ].forEach(([f,s])=>tone(f,s,0.55,'triangle',0.22)); tone(523.25,0.30,0.7,'sine',0.12); }
+function dingMilestone(){ tone(880,0,0.18,'triangle',0.2); tone(1174.7,0.10,0.28,'triangle',0.18); }
+function fanfare(){
   const seq=[[523.25,0],[659.25,0.13],[783.99,0.26],[1046.5,0.40],[1318.5,0.6]];
   seq.forEach(([f,s])=>{ tone(f,s,0.5,'triangle',0.22); tone(f/2,s,0.5,'sine',0.1); });
   tone(1046.5,0.85,0.9,'triangle',0.2);
 }
 
 /* ============================================================
-   MONEY HELPERS
+   MONEY (per book)
    ============================================================ */
-function progress(){ return state.total>0 ? Math.min(1, state.page/state.total) : 0; }
+function progress(){ return active.total>0 ? Math.min(1, active.page/active.total) : 0; }
 function aumT(){ return AUM_MIN_T + (AUM_MAX_T-AUM_MIN_T)*Math.pow(progress(),1.25); }
 function niB(){ return NI_MIN_B + (NI_MAX_B-NI_MIN_B)*Math.pow(progress(),1.35); }
 function fmtAUM(t){ return t>=1 ? '$'+t.toFixed(2)+' T' : '$'+Math.round(t*1000).toLocaleString()+' B'; }
 function fmtNI(b){ return b>=1 ? '$'+b.toFixed(2)+' B' : '$'+Math.round(b*1000).toLocaleString()+' M'; }
-
-/* animated count-up */
 function tween(el, to, fmt, dur=700){
   const from = parseFloat(el.dataset.v||'0');
   el.dataset.v = to;
@@ -705,14 +776,46 @@ function tierFor(done, n){
   return TIERS[Math.min(TIERS.length-2, idx)];
 }
 
+function renderLibrary(){
+  const shelf=$('libShelf'); shelf.innerHTML='';
+  $('libCnt').textContent = state.books.length + (state.books.length===1?' book':' books');
+  state.books.forEach(b=>{
+    const p = b.total>0 ? Math.min(1, b.page/b.total) : 0;
+    const done = b.sections.filter(s=>s.done).length;
+    const allDone = b.sections.length>0 && done===b.sections.length;
+    const stars = (b.review?.stars||0);
+    const card=document.createElement('div');
+    card.className='bk-card'+(b.id===state.activeId?' active':'')+(allDone?' done':'');
+    card.innerHTML=`
+      ${allDone?'<span class="done-badge">FINISHED</span>':''}
+      <div class="bk-t">${esc(b.title||'Untitled book')}</div>
+      <div class="bk-a">${esc(b.author||'Unknown author')}</div>
+      <div class="bk-pg"><span>${b.page} / ${b.total} pg</span><span class="pct">${(p*100).toFixed(0)}%</span></div>
+      <div class="bk-bar"><i style="width:${p*100}%"></i></div>
+      <div class="bk-foot">
+        <span class="bk-stars">${stars?('★'.repeat(stars)):'·'}</span>
+        <button class="bk-del" title="Remove this book from your library">🗑</button>
+      </div>`;
+    card.onclick = (e)=>{
+      if(e.target.classList.contains('bk-del')) return;
+      switchBook(b.id);
+    };
+    card.querySelector('.bk-del').onclick = (e)=>{
+      e.stopPropagation();
+      removeBook(b.id);
+    };
+    shelf.appendChild(card);
+  });
+}
+
 function renderStats(){
   const p=progress();
   tween($('aumVal'), aumT(), fmtAUM);
   tween($('niVal'), niB(), fmtNI);
   $('aumSpark').style.width = (p*100)+'%';
   $('niSpark').style.width  = (p*100)+'%';
-  const n=state.sections.length;
-  const done = state.sections.filter(s=>s.done).length;
+  const n=active.sections.length;
+  const done = active.sections.filter(s=>s.done).length;
   $('msVal').textContent = done+' / '+n;
   $('msSpark').style.width = (n? done/n*100 : 0)+'%';
   $('tierPill').textContent = tierFor(done, n);
@@ -721,30 +824,30 @@ function renderStats(){
 function renderProgress(){
   const p=progress();
   $('barFill').style.width=(p*100)+'%';
-  $('pagesRead').textContent=state.page;
+  $('pagesRead').textContent=active.page;
   $('pctTxt').textContent=(p*100).toFixed(1)+'%';
-  $('pageTotal').textContent=state.total;
-  if(document.activeElement!==$('pageNow')) $('pageNow').value=state.page;
-  $('pageNow').max=state.total;
+  $('pageTotal').textContent=active.total;
+  if(document.activeElement!==$('pageNow')) $('pageNow').value=active.page;
+  $('pageNow').max=active.total;
   const tk=$('ticks'); tk.innerHTML='';
-  state.sections.forEach(s=>{
-    if(state.total>0 && s.ep<=state.total){
+  active.sections.forEach(s=>{
+    if(active.total>0 && s.ep<=active.total){
       const d=document.createElement('div'); d.className='tk';
-      d.style.left=(s.ep/state.total*100)+'%'; tk.appendChild(d);
+      d.style.left=(s.ep/active.total*100)+'%'; tk.appendChild(d);
     }
   });
 }
 
 function renderBook(){
-  $('bkTitleShow').textContent=state.title||'Untitled';
-  $('bkAuthorShow').textContent=state.author||'Unknown author';
-  $('bkPagesShow').textContent=state.total;
+  $('bkTitleShow').textContent=active.title||'Untitled book';
+  $('bkAuthorShow').textContent=active.author||'Unknown author';
+  $('bkPagesShow').textContent=active.total;
 }
 
 function renderSections(){
   const list=$('secList'); list.innerHTML='';
-  state.sections.forEach((s,i)=>{
-    const claimable = !s.done && state.page>=s.ep && state.page>0;
+  active.sections.forEach((s,i)=>{
+    const claimable = !s.done && active.page>=s.ep && active.page>0;
     const row=document.createElement('div');
     row.className='sec'+(s.done?' done':'')+(claimable?' claimable':'');
     row.innerHTML=`
@@ -762,7 +865,7 @@ function renderSections(){
 
 function renderLedger(freshIdx=-1){
   const led=$('ledger');
-  const doneIdx = state.sections.map((s,i)=>s.done?i:-1).filter(i=>i>=0);
+  const doneIdx = active.sections.map((s,i)=>s.done?i:-1).filter(i=>i>=0);
   if(doneIdx.length===0){
     led.className='ledger empty-state';
     led.innerHTML=`<div class="empty">No expansions yet.<br>Read a chapter, mark it done, and watch <b>RBC</b> make its next move.</div>`;
@@ -772,7 +875,7 @@ function renderLedger(freshIdx=-1){
   led.className='ledger';
   let html='<div class="tl">';
   doneIdx.forEach(i=>{
-    const s=state.sections[i], m=s.ms||{};
+    const s=active.sections[i], m=s.ms||{};
     html+=`<div class="ev${i===freshIdx?' fresh':''}">
       <span class="yr">${esc(m.yr||'·')}</span>
       <div class="et">${esc(m.t||'Milestone')}</div>
@@ -782,48 +885,53 @@ function renderLedger(freshIdx=-1){
   });
   html+='</div>';
   led.innerHTML=html;
-  $('ledgerHint').textContent=doneIdx.length+' of '+state.sections.length+' unlocked';
+  $('ledgerHint').textContent=doneIdx.length+' of '+active.sections.length+' unlocked';
 }
 
 function renderReview(){
-  const r=state.review||{stars:0,text:''};
+  const r=active.review||{stars:0,text:''};
   $('stars').querySelectorAll('span').forEach(sp=>{
     sp.classList.toggle('on', +sp.dataset.s <= r.stars);
   });
   if(document.activeElement!==$('reviewText')) $('reviewText').value=r.text||'';
-  $('rsaved').textContent = r.text || r.stars ? 'Saved.' : 'Nothing written yet.';
+  $('rsaved').textContent = (r.text || r.stars) ? 'Saved.' : 'Nothing written yet.';
 }
 
-function renderAll(fresh=-1){ renderBook(); renderStats(); renderProgress(); renderSections(); renderLedger(fresh); renderReview(); }
+function renderSessions(){ $('sessCount').textContent = active.sessions||0; }
+
+function renderAll(fresh=-1){
+  renderLibrary(); renderBook(); renderStats(); renderProgress();
+  renderSections(); renderLedger(fresh); renderReview(); renderSessions();
+}
 
 /* ============================================================
    ACTIONS
    ============================================================ */
 function setPage(v){
-  state.page=Math.max(0,Math.min(state.total, Math.round(v||0)));
-  save(); renderStats(); renderProgress(); renderSections();
+  active.page=Math.max(0,Math.min(active.total, Math.round(v||0)));
+  save(); renderStats(); renderProgress(); renderSections(); renderLibrary();
 }
 function toggleSection(i){
-  const s=state.sections[i];
+  const s=active.sections[i];
   audio();
   if(!s.done){
     s.done=true; dingMilestone();
     const m=s.ms||{};
     toast('🏦', (m.yr? m.yr+': ' : '') + (m.t||'Milestone unlocked'));
-    renderStats(); renderSections(); renderLedger(i);
+    renderStats(); renderSections(); renderLedger(i); renderLibrary();
     checkWin();
   }else{
     s.done=false;
-    state.won=false;
-    renderStats(); renderSections(); renderLedger();
+    active.won=false;
+    renderStats(); renderSections(); renderLedger(); renderLibrary();
   }
   save();
 }
 function checkWin(){
-  const n=state.sections.length;
-  const allDone = n>0 && state.sections.every(s=>s.done);
-  if(allDone && !state.won){
-    state.won=true; save();
+  const n=active.sections.length;
+  const allDone = n>0 && active.sections.every(s=>s.done);
+  if(allDone && !active.won){
+    active.won=true; save();
     setTimeout(showVictory, 450);
   }
 }
@@ -842,8 +950,12 @@ function toast(icon,msg){
 function showVictory(){
   $('winAum').textContent=fmtAUM(AUM_MAX_T);
   $('winNi').textContent=fmtNI(NI_MAX_B);
-  $('winPages').textContent=state.total;
-  $('winText').innerHTML=`You finished <em>${esc(state.title)}</em>. Along the way you took the Royal Bank of Canada from one Halifax branch to the largest bank in the country, with <b>${fmtNI(NI_MAX_B)}</b> in annual net income. Now go write your review while it's fresh.`;
+  $('winPages').textContent=active.total;
+  const otherUnread = state.books.filter(b=>b.id!==active.id && !(b.sections.length>0 && b.sections.every(s=>s.done))).length;
+  const nextLine = otherUnread>0
+    ? ` Got <b>${otherUnread}</b> more in your library when you're ready.`
+    : ` Add another book to keep the streak going.`;
+  $('winText').innerHTML=`You finished <em>${esc(active.title)}</em>. Along the way you took the Royal Bank of Canada from one Halifax branch to the largest bank in the country, with <b>${fmtNI(NI_MAX_B)}</b> in annual net income.${nextLine}`;
   $('veil').classList.add('show');
   fanfare();
   startConfetti();
@@ -851,23 +963,66 @@ function showVictory(){
 function hideVictory(){ $('veil').classList.remove('show'); stopConfetti(); }
 
 /* ============================================================
-   ONBOARDING GATE (book setup window)
+   LIBRARY ACTIONS
    ============================================================ */
-let gw=[];          // working copy of chapters while the gate is open
+function switchBook(id){
+  if(id===state.activeId) return;
+  state.activeId=id; active=findActive(); save();
+  renderAll();
+  toast('📚', 'Switched to '+(active.title||'Untitled book'));
+}
+function removeBook(id){
+  const b = state.books.find(x=>x.id===id); if(!b) return;
+  if(state.books.length<=1){ toast('⚠️','Keep at least one book in the library.'); return; }
+  if(!confirm('Remove "'+(b.title||'Untitled book')+'" from your library? This cannot be undone.')) return;
+  state.books = state.books.filter(x=>x.id!==id);
+  if(state.activeId===id){ state.activeId = state.books[0].id; active = findActive(); }
+  save(); renderAll();
+  toast('🗑️','Book removed.');
+}
+function addBookFlow(){
+  const b = newBlankBook();
+  state.books.push(b);
+  state.activeId = b.id;
+  active = b;
+  save();
+  openGate(true);    // open the setup gate prefilled with the blank book
+}
+
+/* ============================================================
+   ONBOARDING GATE
+   ============================================================ */
+let gw=[];
 let gateFirstRun=false;
+let gatePendingNew=false;   // true when adding a new book; cancel removes it
 
 function openGate(firstRun=false){
   gateFirstRun=firstRun;
   $('gateTitle').textContent = firstRun ? 'Set up your book' : 'Edit your book';
-  $('gCancel').style.display = firstRun ? 'none' : '';
-  $('gTitle').value=state.title;
-  $('gAuthor').value=state.author;
-  $('gPages').value=state.total;
-  gw = state.sections.map(s=>({name:s.name, ep:s.ep, ms:{yr:s.ms?.yr||'', t:s.ms?.t||'', d:s.ms?.d||''}}));
+  $('gCancel').style.display = '';   // always allow cancel in multi-book mode
+  $('gTitle').value=active.title;
+  $('gAuthor').value=active.author;
+  $('gPages').value=active.total;
+  gw = active.sections.map(s=>({name:s.name, ep:s.ep, ms:{yr:s.ms?.yr||'', t:s.ms?.t||'', d:s.ms?.d||''}}));
   renderGateChaps();
   $('gateVeil').classList.add('show');
 }
-function closeGate(){ $('gateVeil').classList.remove('show'); }
+function closeGate(){
+  $('gateVeil').classList.remove('show');
+  // if user cancelled a brand-new book that was never named, drop it
+  if(gatePendingNew){
+    const a = findActive();
+    if(a && !a.title.trim()){
+      state.books = state.books.filter(b=>b.id!==a.id);
+      if(state.books.length===0) state.books.push(newDefaultBook());
+      state.activeId = state.books[0].id;
+      active = findActive();
+      save(); renderAll();
+    }
+    gatePendingNew=false;
+  }
+  gateFirstRun=false;
+}
 
 function renderGateChaps(){
   const box=$('gChaps'); box.innerHTML='';
@@ -916,33 +1071,31 @@ function gateSave(){
   if(!$('gPages').value || total<1){ toast('⚠️','Total pages has to be at least 1.'); return; }
   if(gw.length===0){ toast('⚠️','Add at least one chapter.'); return; }
 
-  const oldDone = state.sections.map(s=>s.done);
-  state.title=title;
-  state.author=author||'Unknown author';
-  state.total=total;
-  if(state.page>total) state.page=total;
-  state.sections = gw.map((c,i)=>({
+  const oldDone = active.sections.map(s=>s.done);
+  active.title=title;
+  active.author=author||'Unknown author';
+  active.total=total;
+  if(active.page>total) active.page=total;
+  active.sections = gw.map((c,i)=>({
     name:c.name.trim()||('Chapter '+(i+1)),
     ep:Math.min(c.ep,total),
     done: oldDone[i]||false,
     ms:{yr:c.ms.yr.trim(), t:c.ms.t.trim(), d:c.ms.d.trim()}
   }));
-  state.won = state.sections.length>0 && state.sections.every(s=>s.done);
+  active.won = active.sections.length>0 && active.sections.every(s=>s.done);
   state.setupDone=true;
+  gatePendingNew=false;
   save();
-  closeGate();
+  $('gateVeil').classList.remove('show');
   renderAll();
-  toast('📚', gateFirstRun ? 'Book set. Start reading and build the bank.' : 'Book setup updated.');
+  toast('📚', gateFirstRun ? 'Book set. Start reading.' : 'Book updated.');
   gateFirstRun=false;
 }
 
 /* ============================================================
-   TIMER  (wall-clock accurate; keeps running when the tab is
-   hidden or the window is minimized via a Web Worker ticker,
-   with a setInterval fallback and a focus/visibility catch-up)
+   TIMER (wall-clock, worker-driven, survives minimize)
    ============================================================ */
 let remain=25*60, ticking=false, endAt=0, fallbackId=null, completing=false;
-
 function fmtClock(s){ const m=Math.floor(s/60), ss=s%60; return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'); }
 function paintClock(){ $('clock').textContent=fmtClock(Math.max(0,remain)); }
 
@@ -951,37 +1104,23 @@ function playChime(){
   if(ac && ac.state==='suspended'){ ac.resume().then(chimeDone).catch(chimeDone); }
   else chimeDone();
 }
-
-/* A worker fires ticks even when the page is in the background.
-   If the worker can't be created (e.g. some local file:// setups),
-   fall back to setInterval. Either way the wall clock below is the
-   real source of truth, so the countdown never drifts. */
 let ticker=null;
 try{
   const src="let id=null;onmessage=function(e){if(e.data==='start'){clearInterval(id);id=setInterval(function(){postMessage(1)},250)}else{clearInterval(id)}};";
   ticker=new Worker(URL.createObjectURL(new Blob([src],{type:'application/javascript'})));
   ticker.onmessage=onTick;
 }catch(e){ ticker=null; }
-
-function startTickLoop(){
-  if(ticker){ ticker.postMessage('start'); }
-  else { clearInterval(fallbackId); fallbackId=setInterval(onTick,250); }
-}
-function stopTickLoop(){
-  if(ticker){ ticker.postMessage('stop'); }
-  clearInterval(fallbackId);
-}
-
+function startTickLoop(){ if(ticker){ ticker.postMessage('start'); } else { clearInterval(fallbackId); fallbackId=setInterval(onTick,250); } }
+function stopTickLoop(){ if(ticker){ ticker.postMessage('stop'); } clearInterval(fallbackId); }
 function onTick(){
   if(!ticking) return;
   remain=Math.max(0, Math.round((endAt-Date.now())/1000));
   paintClock();
   if(Date.now()>=endAt) finishTimer();
 }
-
 function startTimer(){
-  audio(); // first user gesture unlocks audio
-  if(ticking){ // pause
+  audio();
+  if(ticking){
     remain=Math.max(0, Math.round((endAt-Date.now())/1000));
     ticking=false; stopTickLoop(); $('tStart').textContent='Resume'; paintClock(); return;
   }
@@ -990,30 +1129,25 @@ function startTimer(){
   ticking=true; completing=false; $('tStart').textContent='Pause';
   paintClock(); startTickLoop();
 }
-
 function finishTimer(){
   if(completing) return; completing=true;
   ticking=false; stopTickLoop();
   remain=0; paintClock(); $('tStart').textContent='Start';
   $('clock').classList.add('ring'); setTimeout(()=>$('clock').classList.remove('ring'),3200);
   playChime();
-  state.sessions=(state.sessions||0)+1; $('sessCount').textContent=state.sessions; save();
+  active.sessions=(active.sessions||0)+1; renderSessions(); save();
   toast('⏰', "Sprint done. Go log the pages you just read.");
 }
-
 function resetTimer(){
   ticking=false; completing=false; stopTickLoop(); $('tStart').textContent='Start';
   remain=(state.minutes||25)*60; endAt=0; paintClock(); $('clock').classList.remove('ring');
 }
-
-/* If the window was minimized or the tab hidden while time ran out,
-   correct the display the instant it returns, and chime then. */
 function onWake(){ if(ticking) onTick(); }
 document.addEventListener('visibilitychange', onWake);
 window.addEventListener('focus', onWake);
 
 /* ============================================================
-   CONFETTI (gold / blue / white)
+   CONFETTI
    ============================================================ */
 let cc, cctx, cparts=[], craf=null;
 function startConfetti(){
@@ -1045,31 +1179,29 @@ addEventListener('resize',()=>{ if(cc&&cc.classList.contains('show')){ cc.width=
    WIRING
    ============================================================ */
 function wire(){
-  $('plus').onclick =()=>setPage(state.page+1);
-  $('minus').onclick=()=>setPage(state.page-1);
-  document.querySelectorAll('.quick .qbtn').forEach(b=>b.onclick=()=>setPage(state.page+ (+b.dataset.add)));
+  $('plus').onclick =()=>setPage(active.page+1);
+  $('minus').onclick=()=>setPage(active.page-1);
+  document.querySelectorAll('.quick .qbtn').forEach(b=>b.onclick=()=>setPage(active.page+ (+b.dataset.add)));
   $('pageNow').oninput=()=>setPage(+$('pageNow').value);
 
-  /* setup gate */
+  $('newBook').onclick=()=>{ gatePendingNew=true; addBookFlow(); };
   $('openSetup').onclick=()=>openGate(false);
   $('gAdd').onclick=gateAddChapter;
   $('gSave').onclick=gateSave;
   $('gCancel').onclick=closeGate;
-  $('gateVeil').onclick=(e)=>{ if(e.target===$('gateVeil') && !gateFirstRun) closeGate(); };
+  $('gateVeil').onclick=(e)=>{ if(e.target===$('gateVeil')) closeGate(); };
 
-  /* review */
   $('stars').querySelectorAll('span').forEach(sp=>sp.onclick=()=>{
     const v=+sp.dataset.s;
-    state.review.stars = (state.review.stars===v) ? 0 : v;  // click again to clear
-    save(); renderReview();
+    active.review.stars = (active.review.stars===v) ? 0 : v;
+    save(); renderReview(); renderLibrary();
   });
   $('reviewText').oninput=()=>{
-    state.review.text=$('reviewText').value;
+    active.review.text=$('reviewText').value;
     save();
     $('rsaved').textContent='Saved.';
   };
 
-  /* timer */
   document.querySelectorAll('.tchip button').forEach(b=>b.onclick=()=>{
     state.minutes=+b.dataset.min; $('tmrMin').value=state.minutes; save();
     if(!ticking){ remain=state.minutes*60; paintClock(); }
@@ -1083,88 +1215,111 @@ function wire(){
 
   $('winReplay').onclick=()=>{
     hideVictory();
-    state.page=0; state.won=false; state.sections.forEach(s=>s.done=false);
-    save(); renderAll(); toast('📖','Fresh start. Back to page one, ready to build it all again.');
+    active.page=0; active.won=false; active.sections.forEach(s=>s.done=false);
+    save(); renderAll(); toast('📖','Fresh start on this book.');
   };
   $('winClose').onclick=hideVictory;
   $('veil').onclick=(e)=>{ if(e.target===$('veil')) hideVictory(); };
 
   $('resetAll').onclick=async()=>{
-    if(!confirm('Reset all progress, milestones, review and timer? This cannot be undone.')) return;
+    if(!confirm('Reset your ENTIRE library? Every book, every page, every review will be wiped. This cannot be undone.')) return;
     await Store.clear();
-    state=defaultState();
+    state=defaultState(); active=findActive();
     remain=state.minutes*60; resetTimer();
-    $('sessCount').textContent=0;
     renderAll(); hideVictory();
-    toast('♻️','Everything reset.');
+    toast('♻️','Library reset.');
     openGate(true);
   };
 }
 
 /* ============================================================
-   INIT (with migration from the v1 save format)
+   INIT + MIGRATION (v1, v2 -> v3 library)
    ============================================================ */
+function legacySingleBookToBook(s){
+  const sections = Array.isArray(s.sections) ? s.sections.map((x,i)=>({
+    name: x.name ?? ('Chapter '+(i+1)),
+    ep: Math.max(0,+x.ep||0),
+    done: !!x.done,
+    ms: (x.ms && typeof x.ms==='object')
+      ? {yr:String(x.ms.yr||''), t:String(x.ms.t||''), d:String(x.ms.d||'')}
+      : (DEFAULT_MILESTONES[i] ? {...DEFAULT_MILESTONES[i]} : blankMilestone(i))
+  })) : DEFAULT_CHAPTERS.map((c,i)=>({name:c.name, ep:c.ep, done:false, ms:{...DEFAULT_MILESTONES[i]}}));
+  return {
+    id: uid(),
+    title: s.title ?? 'The Worldly Philosophers',
+    author: s.author ?? 'Robert L. Heilbroner',
+    total: s.total ?? 368,
+    page: Math.min(s.page??0, s.total??368),
+    won: !!s.won,
+    sessions: s.sessions ?? 0,
+    review: (s.review && typeof s.review==='object') ? {stars:+s.review.stars||0, text:String(s.review.text||'')} : {stars:0,text:''},
+    sections,
+    created: Date.now()
+  };
+}
+
 (async function init(){
   state=defaultState();
-  let raw=await Store.get();
-  let migrated=false;
+  let raw = await Store.get();
+  let migratedFrom = null;
 
-  if(!raw){
-    const old=await Store.get(OLD_KEY);
-    if(old){
-      try{
-        const s=JSON.parse(old);
-        state.title=s.title??state.title;
-        state.author=s.author??state.author;
-        state.total=s.total??state.total;
-        state.page=Math.min(s.page??0, state.total);
-        state.minutes=s.minutes??25;
-        state.sessions=s.sessions??0;
-        state.won=!!s.won;
-        if(Array.isArray(s.sections)){
-          state.sections=s.sections.map((x,i)=>({
-            name:x.name??('Chapter '+(i+1)),
-            ep:x.ep??0,
-            done:!!x.done,
-            ms: DEFAULT_MILESTONES[i] ? {...DEFAULT_MILESTONES[i]} : blankMilestone(i)
-          }));
-        }
-        state.setupDone=true;   // they were already mid-game
-        migrated=true; save();
-      }catch(e){}
-    }
-  }else{
+  if(raw){
     try{
       const s=JSON.parse(raw);
-      state.title=s.title??state.title;
-      state.author=s.author??state.author;
-      state.total=s.total??state.total;
-      state.page=Math.min(s.page??0, state.total);
-      state.minutes=s.minutes??25;
-      state.sessions=s.sessions??0;
-      state.won=!!s.won;
-      state.setupDone=!!s.setupDone;
-      state.review=(s.review && typeof s.review==='object') ? {stars:+s.review.stars||0, text:String(s.review.text||'')} : {stars:0,text:''};
-      if(Array.isArray(s.sections) && s.sections.length){
-        state.sections=s.sections.map((x,i)=>({
-          name:x.name??('Chapter '+(i+1)),
-          ep:Math.max(0,+x.ep||0),
-          done:!!x.done,
-          ms:(x.ms && typeof x.ms==='object') ? {yr:String(x.ms.yr||''), t:String(x.ms.t||''), d:String(x.ms.d||'')} : blankMilestone(i)
+      if(Array.isArray(s.books)){
+        // v3 library
+        state.books = s.books.map(b=>({
+          id: b.id || uid(),
+          title: b.title ?? 'Untitled',
+          author: b.author ?? '',
+          total: b.total ?? 1,
+          page: Math.min(b.page??0, b.total??1),
+          won: !!b.won,
+          sessions: b.sessions ?? 0,
+          review: (b.review && typeof b.review==='object') ? {stars:+b.review.stars||0, text:String(b.review.text||'')} : {stars:0,text:''},
+          sections: Array.isArray(b.sections) ? b.sections.map((x,i)=>({
+            name:x.name ?? ('Chapter '+(i+1)),
+            ep:Math.max(0,+x.ep||0),
+            done:!!x.done,
+            ms:(x.ms && typeof x.ms==='object') ? {yr:String(x.ms.yr||''), t:String(x.ms.t||''), d:String(x.ms.d||'')} : blankMilestone(i)
+          })) : [],
+          created: b.created || Date.now()
         }));
+        if(state.books.length===0) state.books.push(newDefaultBook());
+        state.activeId = s.activeId && state.books.find(b=>b.id===s.activeId) ? s.activeId : state.books[0].id;
+        state.minutes = s.minutes ?? 25;
+        state.setupDone = !!s.setupDone;
       }
     }catch(e){}
   }
 
-  $('sessCount').textContent=state.sessions||0;
+  if(!raw){
+    // try v2, then v1
+    const v2 = await Store.get(V2_KEY);
+    const v1 = !v2 ? await Store.get(V1_KEY) : null;
+    const legacy = v2 || v1;
+    if(legacy){
+      try{
+        const s=JSON.parse(legacy);
+        const book = legacySingleBookToBook(s);
+        state.books = [book];
+        state.activeId = book.id;
+        state.minutes = s.minutes ?? 25;
+        state.setupDone = true;
+        migratedFrom = v2 ? 'v2' : 'v1';
+        save();
+      }catch(e){}
+    }
+  }
+
+  active = findActive();
   $('tmrMin').value=state.minutes||25;
   remain=(state.minutes||25)*60; paintClock();
   wire();
   renderAll();
 
-  /* first visit (or fresh reset): the onboarding gate is the front door */
   if(!state.setupDone) openGate(true);
-  else if(migrated) toast('📚','Your old progress carried over. Edit the book any time via book setup.');
+  else if(migratedFrom) toast('📚','Your previous book moved into the library. Add more with "+ Add a new book".');
 })();
 </script>
 </body>
